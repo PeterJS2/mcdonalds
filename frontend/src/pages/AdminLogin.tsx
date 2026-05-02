@@ -35,12 +35,36 @@ const AdminLogin = ({ setUser }: { setUser: any }) => {
     }
   };
 
+  const handleForgotPassword = async () => {
+    const userToReset = window.prompt('Masukkan Username Anda:');
+    if (!userToReset) return;
+    
+    const newPwd = window.prompt('Masukkan Password Baru:');
+    if (!newPwd) return;
+
+    if (newPwd.length < 4) {
+      alert('Password minimal 4 karakter.');
+      return;
+    }
+
+    try {
+      // Pastikan path ini sesuai dengan rute di backend (users/forgot-password)
+      await api.post('/users/forgot-password', { 
+        username: userToReset.toLowerCase().trim(), 
+        newPassword: newPwd 
+      });
+      alert('Password berhasil direset! Silakan login menggunakan password baru.');
+    } catch (err) {
+      alert('Username tidak ditemukan atau terjadi kesalahan server.');
+    }
+  };
+
   return (
     <Box sx={{ 
       display: 'flex', 
       alignItems: 'center', 
       justifyContent: 'center', 
-      minHeight: '100vh', 
+      minHeight: '1000px', 
       bgcolor: '#f5f5f5' 
     }}>
       <Container maxWidth="xs">
@@ -83,7 +107,7 @@ const AdminLogin = ({ setUser }: { setUser: any }) => {
               variant="contained"
               sx={{ 
                 mt: 3, 
-                mb: 2, 
+                mb: 1, 
                 py: 1.5, 
                 bgcolor: '#DA291C', 
                 fontWeight: 'bold',
@@ -91,6 +115,15 @@ const AdminLogin = ({ setUser }: { setUser: any }) => {
               }}
             >
               Login
+            </Button>
+            <Button
+              fullWidth
+              variant="text"
+              size="small"
+              onClick={handleForgotPassword}
+              sx={{ color: 'text.secondary', textTransform: 'none' }}
+            >
+              Forgot Password?
             </Button>
           </Box>
         </Paper>

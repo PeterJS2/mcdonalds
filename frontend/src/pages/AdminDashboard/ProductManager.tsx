@@ -19,12 +19,13 @@ import {
   TableRow,
   IconButton
 } from '@mui/material';
-import { Delete as DeleteIcon } from '@mui/icons-material';
+import { Delete as DeleteIcon, CloudUpload as UploadIcon } from '@mui/icons-material';
 
 const ProductManager = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
   const [form, setForm] = useState({ name: '', price: '', category_id: '', image_url: '' });
+  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -37,6 +38,36 @@ const ProductManager = () => {
       setCategories(c.data);
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const handleFileUpload = async (file: File) => {
+    const formData = new FormData();
+    formData.append('image', file);
+    
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://localhost:5000/api/products/upload', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: formData
+      });
+      const data = await response.json();
+      if (data.imageUrl) {
+        setForm({ ...form, image_url: data.imageUrl });
+        alert('Gambar berhasil diunggah!');
+      }
+    } catch (err) {
+      alert('Gagal mengunggah gambar');
+    }
+  };
+
+  const onDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      handleFileUpload(file);
     }
   };
 
@@ -63,7 +94,6 @@ const ProductManager = () => {
       <Paper sx={{ p: 3, mb: 4 }}>
         <Box component="form" onSubmit={handleSubmit} noValidate>
           <Grid container spacing={3}>
-            {/* Baris 1: Nama dan Harga */}
             <Grid item xs={12} sm={8}>
               <TextField
                 fullWidth
@@ -86,8 +116,7 @@ const ProductManager = () => {
               />
             </Grid>
 
-            {/* Baris 2: Kategori, Gambar, dan Tombol */}
-            <Grid item xs={12} sm={5}>
+            <Grid item xs={12} sm={4}>
               <FormControl fullWidth>
                 <InputLabel>Category</InputLabel>
                 <Select
@@ -101,24 +130,35 @@ const ProductManager = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={5}>
-              <FormControl fullWidth>
-                <InputLabel>Select Image File</InputLabel>
-                <Select
-                  value={form.image_url.replace('/images/', '')}
-                  label="Select Image File"
-                  onChange={e => setForm({...form, image_url: `/images/${e.target.value}`})}
-                >
-                  <MenuItem value="bigmac.png">bigmac.png</MenuItem>
-                  <MenuItem value="cheeseburger.png">cheeseburger.png</MenuItem>
-                  <MenuItem value="panas_special.png">panas_special.png</MenuItem>
-                  <MenuItem value="fries.png">fries.png</MenuItem>
-                  <MenuItem value="coca_cola.png">coca_cola.png</MenuItem>
-                  <MenuItem value="mcflurry.png">mcflurry.png</MenuItem>
-                </Select>
-              </FormControl>
+
+            <Grid item xs={12} sm={4}>
+              <Box
+                onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                onDragLeave={() => setIsDragging(false)}
+                onDrop={onDrop}
+                sx={{
+                  border: '2px dashed',
+                  borderColor: isDragging ? 'primary.main' : '#ccc',
+                  borderRadius: 2,
+                  p: 2,
+                  textAlign: 'center',
+                  bgcolor: isDragging ? '#e3f2fd' : '#fafafa',
+                  cursor: 'pointer',
+                  height: '56px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: '0.3s'
+                }}
+              >
+                <UploadIcon sx={{ mr: 1, color: isDragging ? 'primary.main' : '#666' }} />
+                <Typography variant="body2" color="textSecondary">
+                  {form.image_url ? `Selected: ${form.image_url.split('/').pop()}` : 'Drop Image Here'}
+                </Typography>
+              </Box>
             </Grid>
-            <Grid item xs={12} sm={2}>
+
+            <Grid item xs={12} sm={4}>
               <Button 
                 fullWidth 
                 type="submit" 
@@ -131,20 +171,18 @@ const ProductManager = () => {
             </Grid>
           </Grid>
         </Box>
+      </Paper>
 
-            </Paper>
-
-            <TableContainer component={Paper}>
-            <Table>
-            <TableHead sx={{ bgcolor: '#eee' }}>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead sx={{ bgcolor: '#eee' }}>
             <TableRow>
               <TableCell sx={{ fontWeight: 'bold', width: '25%' }}>Name</TableCell>
               <TableCell sx={{ fontWeight: 'bold', width: '35%' }}>Category</TableCell>
               <TableCell sx={{ fontWeight: 'bold', width: '20%' }}>Price</TableCell>
               <TableCell align="right" sx={{ fontWeight: 'bold', width: '20%' }}>Actions</TableCell>
             </TableRow>
-            </TableHead>
-
+          </TableHead>
           <TableBody>
             {products.map(p => (
               <TableRow key={p.id} hover>

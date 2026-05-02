@@ -1,4 +1,4 @@
-import { Routes, Route, useNavigate, Link as RouterLink } from 'react-router';
+import { Routes, Route, useNavigate, Link as RouterLink, Navigate } from 'react-router';
 import { 
   Box, 
   Drawer, 
@@ -34,7 +34,6 @@ const AdminDashboard = () => {
   };
 
   const menuItems = [
-    { text: 'Dashboard', icon: <DashboardIcon />, path: '/admin/dashboard' },
     { text: 'Products', icon: <PackageIcon />, path: '/admin/dashboard/products' },
     { text: 'Categories', icon: <TagsIcon />, path: '/admin/dashboard/categories' },
     { text: 'Users', icon: <UsersIcon />, path: '/admin/dashboard/users' },
@@ -58,7 +57,7 @@ const AdminDashboard = () => {
       >
         <Box sx={{ p: 3, display: 'flex', alignItems: 'center', gap: 2 }}>
           <DashboardIcon sx={{ color: '#FFC72C' }} />
-          <Typography variant="h6" fontWeight="bold">Admin</Typography>
+          <Typography variant="h6" fontWeight="bold">Admin Panel</Typography>
         </Box>
         <Divider sx={{ bgcolor: 'rgba(255,255,255,0.1)' }} />
         <List>
@@ -92,19 +91,13 @@ const AdminDashboard = () => {
       {/* Main Content */}
       <Box
         component="main"
-        sx={{ flexGrow: 1, bgcolor: '#f5f5f5', p: 4, minHeight: '100vh' }}
+        sx={{ flexGrow: 1, bgcolor: '#f5f5f5', p: 4, minHeight: '1000px' }}
       >
         <Routes>
           <Route path="products" element={<ProductManager />} />
           <Route path="categories" element={<CategoryManager />} />
           <Route path="users" element={<UserManager />} />
-          <Route path="/" element={
-            <Box sx={{ mt: 10, textAlign: 'center' }}>
-              <Typography variant="h3" color="text.disabled" fontWeight="bold">
-                Selamat Datang di Admin Panel
-              </Typography>
-            </Box>
-          } />
+          <Route path="/" element={<Navigate to="products" replace />} />
         </Routes>
       </Box>
     </Box>

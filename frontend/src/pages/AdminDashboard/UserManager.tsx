@@ -49,6 +49,22 @@ const UserManager = () => {
     }
   };
 
+  const handleResetPassword = async (id: string, username: string) => {
+    const newPassword = window.prompt(`Masukkan password baru untuk user "${username}":`);
+    if (newPassword) {
+      if (newPassword.length < 4) {
+        alert('Password terlalu pendek (min 4 karakter)');
+        return;
+      }
+      try {
+        await api.patch(`/users/${id}/reset-password`, { newPassword });
+        alert('Password berhasil diperbarui!');
+      } catch (err) {
+        alert('Gagal memperbarui password');
+      }
+    }
+  };
+
   return (
     <Box>
       <Typography variant="h4" fontWeight="bold" gutterBottom>Manage Admin Users</Typography>
@@ -112,9 +128,18 @@ const UserManager = () => {
             <Box key={u.id}>
               <ListItem
                 secondaryAction={
-                  <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(u.id)} color="error">
-                    <DeleteIcon />
-                  </IconButton>
+                  <Box sx={{ display: 'flex', gap: 1 }}>
+                    <Button 
+                      size="small" 
+                      variant="outlined" 
+                      onClick={() => handleResetPassword(u.id, u.username)}
+                    >
+                      Reset Pwd
+                    </Button>
+                    <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(u.id)} color="error">
+                      <DeleteIcon />
+                    </IconButton>
+                  </Box>
                 }
               >
                 <ListItemText 

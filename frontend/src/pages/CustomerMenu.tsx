@@ -107,7 +107,7 @@ const CustomerMenu = () => {
         flexDirection: 'column', 
         alignItems: 'center', 
         justifyContent: 'center', 
-        height: '100vh', 
+        height: '1000px', 
         bgcolor: '#FFC72C', 
         color: 'white' 
       }}>
@@ -119,7 +119,7 @@ const CustomerMenu = () => {
   }
 
   return (
-    <Box sx={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+    <Box sx={{ display: 'flex', height: '1000px', overflow: 'hidden' }}>
       {/* Sidebar: Categories */}
       <Box sx={{ 
         width: '25%', 

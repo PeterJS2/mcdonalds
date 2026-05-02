@@ -24,7 +24,7 @@ function App() {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyItems: 'center', height: '100vh', width: '100%' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyItems: 'center', height: '1000px', width: '100%' }}>
         <CircularProgress sx={{ m: 'auto' }} />
       </Box>
     );
@@ -36,7 +36,7 @@ function App() {
   return (
     <Router>
       <CssBaseline />
-      <Box sx={{ minHeight: '100vh' }}>
+      <Box sx={{ minHeight: '1000px' }}>
         <Routes>
           {/* Customer Side */}
           <Route path="/" element={<CustomerMenu />} />

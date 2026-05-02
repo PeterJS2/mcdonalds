@@ -16,7 +16,8 @@ import {
 import { 
   ChevronLeft as ChevronLeftIcon, 
   Refresh as RefreshCwIcon,
-  Delete as DeleteIcon
+  Delete as DeleteIcon,
+  Logout as LogoutIcon
 } from '@mui/icons-material';
 
 const KasirOrders = () => {
@@ -27,6 +28,7 @@ const KasirOrders = () => {
   const fetchData = async () => { 
     try {
       const res = await api.get('/orders'); 
+      res.data.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
       setOrders(res.data); 
     } catch(err) { console.error(err); }
   };
@@ -47,9 +49,14 @@ const KasirOrders = () => {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.href = '/admin/login';
+  };
 
   return (
-    <Box sx={{ p: 4, bgcolor: '#f5f5f5', minHeight: '100vh' }}>
+    <Box sx={{ p: 4, bgcolor: '#f5f5f5', minHeight: '1000px' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <IconButton 
@@ -60,14 +67,25 @@ const KasirOrders = () => {
           </IconButton>
           <Typography variant="h4" fontWeight="bold">Manage Orders</Typography>
         </Box>
-        <Button 
-          variant="contained" 
-          startIcon={<RefreshCwIcon />} 
-          onClick={fetchData}
-          sx={{ fontWeight: 'bold' }}
-        >
-          Refresh
-        </Button>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button 
+            variant="outlined" 
+            color="error"
+            startIcon={<LogoutIcon />} 
+            onClick={handleLogout}
+            sx={{ fontWeight: 'bold' }}
+          >
+            Logout
+          </Button>
+          <Button 
+            variant="contained" 
+            startIcon={<RefreshCwIcon />} 
+            onClick={fetchData}
+            sx={{ fontWeight: 'bold' }}
+          >
+            Refresh
+          </Button>
+        </Box>
       </Box>
 
       <Grid container spacing={3}>
